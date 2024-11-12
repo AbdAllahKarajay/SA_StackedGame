@@ -2,6 +2,8 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class StackingGame extends JFrame {
     private GamePanel gamePanel;
@@ -12,19 +14,50 @@ public class StackingGame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        Color[][] startGrid = new Color[5][5];
-        startGrid[0] = new Color[]{Color.RED, Color.RED, null, null, null};
-        startGrid[1] = new Color[]{null, Color.GREEN, null, Color.GRAY, Color.BLUE};
-        startGrid[2] = new Color[]{Color.BLUE, Color.GREEN, null, Color.GRAY, Color.BLUE};
-        startGrid[3] = new Color[]{null, Color.GRAY, null, Color.GRAY, Color.GREEN};
-        startGrid[4] = new Color[]{null, Color.RED, null, null, null};
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter: COLS ROWS");
+        int cols = scanner.nextInt();
+        int rows = scanner.nextInt();
+        Color[][] startGrid = new Color[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            System.out.println("Enter Colors of " + (i+1) + " row: ");
+            for (int j = 0; j < cols; j++) {
+                System.out.print(" "+ (j+1)+": ");
+                String input = scanner.next();
+                startGrid[i][j] = colorFromString(input);
+            }
+        }
+        System.out.println(Arrays.deepToString(startGrid));
 
-        GamePanel gamePanel = new GamePanel(5, 5, startGrid);  // 5x5 grid
+
+        GamePanel gamePanel = new GamePanel(rows, cols, startGrid);  // 5x5 grid
         add(gamePanel);
         setVisible(true);
     }
 
-    public static void main(String[] args) {
+    private Color colorFromString(String input) {
+        switch (input.toUpperCase()){
+            case "RED" -> {
+                return Color.RED;
+            }
+            case "GREEN" -> {
+                return Color.GREEN;
+            }case "BLUE" -> {
+                return Color.BLUE;
+            }case "PINK" -> {
+                return Color.PINK;
+            }case "GRAY" -> {
+                return Color.GRAY;
+            }case "WALL" -> {
+                return Color.GRAY;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    public static void main(String[] args)  {
         SwingUtilities.invokeLater(StackingGame::new);
     }
 }

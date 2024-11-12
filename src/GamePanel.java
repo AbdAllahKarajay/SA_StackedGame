@@ -1,11 +1,8 @@
 import javax.swing.*;
-import javax.swing.plaf.DesktopIconUI;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GamePanel extends JPanel {
     private final int cellSize = 60;
@@ -32,42 +29,42 @@ public class GamePanel extends JPanel {
                     case KeyEvent.VK_RIGHT -> grid = playerMove(1, 0);
                 }
                 repaint();
-                checkWinCondition();
+                checkWinState();
             }
         });
     }
 
 
-    private GameGrid playerMove(int dx, int dy) {
+    private GameGrid playerMove(int XX, int YY) {
         Color[][] newGrid = new Color[grid.rows][grid.cols];
 
-        for (int y = (dy > 0 ? grid.rows - 1 : 0); y >= 0 && y < grid.rows; y += (dy > 0 ? -1 : 1)) {
-            for (int x = (dx > 0 ? grid.cols - 1 : 0); x >= 0 && x < grid.cols; x += (dx > 0 ? -1 : 1)) {
-                Color color = grid.grid[y][x];
+        for (int oldY = (YY > 0 ? grid.rows - 1 : 0); oldY >= 0 && oldY < grid.rows; oldY += (YY > 0 ? -1 : 1)) {
+            for (int oldX = (XX > 0 ? grid.cols - 1 : 0); oldX >= 0 && oldX < grid.cols; oldX += (XX > 0 ? -1 : 1)) {
+                Color color = grid.grid[oldY][oldX];
                 if (color == Color.GRAY) {
-                    newGrid[y][x] = color;
+                    newGrid[oldY][oldX] = color;
                     continue;
                 }
                 if (color != null) {
-                    int newX = x, newY = y;
-                    while (isInBounds(newX + dx, newY + dy)
-                            && (newGrid[newY + dy][newX + dx] == null || newGrid[newY + dy][newX + dx] == color)
+                    int x = oldX, y = oldY;
+                    while (inBounds(x + XX, y + YY)
+                            && (newGrid[y + YY][x + XX] == null || newGrid[y + YY][x + XX] == color)
                     ) {
-                        newX += dx;
-                        newY += dy;
+                        x += XX;
+                        y += YY;
                     }
-                    newGrid[newY][newX] = color;
+                    newGrid[y][x] = color;
                 }
             }
         }
         return new GameGrid(newGrid, grid.rows, grid.cols);
     }
 
-    private boolean isInBounds(int x, int y) {
+    private boolean inBounds(int x, int y) {
         return x >= 0 && x < grid.cols && y >= 0 && y < grid.rows;
     }
 
-    private void checkWinCondition() {
+    private void checkWinState() {
         if (grid.colorCount.entrySet().stream().allMatch(
                 entry -> entry.getValue() == 1 || entry.getKey() == Color.GRAY)) {
             JOptionPane.showMessageDialog(this, "You win!");
